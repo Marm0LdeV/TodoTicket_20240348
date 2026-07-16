@@ -1,5 +1,7 @@
 import {config} from "../../config.js"
 import ClientModel from "../models/Clientes.js";
+import bcrypt from "bcryptjs"
+import token from "jsonwebtoken"
 
 //Array de funciones
 const loginClientController = {};

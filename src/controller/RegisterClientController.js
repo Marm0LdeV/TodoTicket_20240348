@@ -1,6 +1,9 @@
 import ClientModel from "../models/Clientes.js";
 import { config } from "../../config.js"
-
+import bcryptjs from "bcryptjs"
+import crypto from "crypto"
+import jsonwebtoken from "jsonwebtoken"
+import nodemailer from "nodemailer"
 //CREO UN ARRAY DE FUNCIONES
 const registerClientController = {};
 
@@ -12,7 +15,7 @@ registerClientController.register = async (req,res) => {
         isVerified,
         loginAttempts,
         timeOut} = req.body;
-}
+
 
 try {
     //Verificar si el cliente ya existe
@@ -21,7 +24,7 @@ try {
         return res.status (400).json({message: "Client already exist"});
     }
         //Encriptar la contraseña
-        const passwordHash = await bcrypt.hash(password,10);
+        const passwordHash = await bcryptjs.hash(password,10);
 
         //generamos un código aleatorio
         const verificationcode= crypto.randomBytes(3).toString("hex")
@@ -58,7 +61,7 @@ try {
         from: config.email.user_email,
         to:email,
         subject: "Verificación de cuenta",
-        text: "Para verificar tu cuenta, utiliza este codigo" + verificationCode + "expira en 15 minutos",
+        text: "Para verificar tu cuenta, utiliza este codigo" + verificationcode + "expira en 15 minutos",
     };
 
     //#3 Enviar el correo
@@ -67,10 +70,12 @@ try {
             console.log("error" + error);
             return res.status(500).json({message: "error"});
         }
+            res.status(200).json({message: "Registro exitoso"});
     });
 } catch (error) {
     console.log("error" + error);
     return res.status(500).json({message: "internal server error"});
+}
 }
 
 //Verificar el codigo que acabamos de mandar
@@ -114,6 +119,7 @@ registerClientController.verifyCode = async (req, res) => {
                 const client = await ClientModel.findOne({email});
                 client.isVerified = true;
                 await client.save();
+                res.clearCookie("Verification token")
                 res.json({ message: "Email verified succesfully"});
     } catch (error) {
         console.log("error" + error);

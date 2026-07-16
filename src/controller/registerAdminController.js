@@ -1,4 +1,4 @@
-import AdminModel from "../models/Clientes.js";
+import AdminModel from "../models/Administrador.js";
 import { config } from "../../config.js"
 
 //CREO UN ARRAY DE FUNCIONES
@@ -12,13 +12,13 @@ registerAdminController.register = async (req,res) => {
         isVerified,
         loginAttempts,
         timeOut} = req.body;
-}
+
 
 try {
     //Verificar si el cliente ya existe
-    const existClient = await AdminModel.findOne({email});
-    if (existClient) {
-        return res.status (400).json({message: "Client already exist"});
+    const existAdmin = await AdminModel.findOne({email});
+    if (existAdmin) {
+        return res.status (400).json({message: "Admin already exist"});
     }
         //Encriptar la contraseña
         const passwordHash = await bcrypt.hash(password,10);
@@ -72,6 +72,7 @@ try {
     console.log("error" + error);
     return res.status(500).json({message: "internal server error"});
 }
+}
 
 //Verificar el codigo que acabamos de mandar
 registerAdminController.verifyCode = async (req, res) => {
@@ -111,9 +112,9 @@ registerAdminController.verifyCode = async (req, res) => {
                 await newAdmin.save();
 
                 //si el código esta bien, entonces colocamos el campo isVerified
-                const client = await AdminModel.findOne({email});
-                client.isVerified = true;
-                await client.save();
+                const admin = await AdminModel.findOne({email});
+                admin.isVerified = true;
+                await admin.save();
                 res.json({ message: "Email verified succesfully"});
     } catch (error) {
         console.log("error" + error);

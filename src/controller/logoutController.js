@@ -7,4 +7,4 @@ logoutController.logout = async (req,res) => {
     } catch (error) {}
 };
 
-export default logOutController;
+export default logoutController;
