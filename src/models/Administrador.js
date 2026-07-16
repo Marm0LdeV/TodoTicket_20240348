@@ -11,7 +11,7 @@
 
 import mongoose, {Schema,model} from "mongoose";
 
-const ClientesSchema = new Schema (
+const AdministradorSchema = new Schema (
     {
         name: {type: String}
     },
@@ -30,4 +30,4 @@ const ClientesSchema = new Schema (
     }
 );
 
-export default model ("Clients", ClientesSchema);
+export default model ("Admin", AdministradorSchema);
